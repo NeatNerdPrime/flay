@@ -585,13 +585,8 @@ class Sexp
 
   def [] a # :nodoc:
     # TODO: figure out a way to make this STRICT_SEXP happy
-    s = super
-    if Sexp === s then
-      s.file = self.file
-      s.line = self.line
-      s.modified = self.modified
-    end
-    s
+    self.new._concat super
+    super
   end
 
   def + o # :nodoc:

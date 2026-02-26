@@ -229,6 +229,68 @@ class TestSexp < Minitest::Test
     assert_equal exp.gsub(/\d+/, "N"), out.gsub(/\d+/, "N")
   end
 
+  def test__fuzzy__split_at
+    # def x(n); n + 1; end
+    sexp = s(:defn, :x, s(:args, :n), s(:call, s(:lvar, :n), :+, s(:lit, 1)))
+    sexp = NotRubyParser.new.parse "def x(n); n + 1; end"
+
+    a, b = sexp.split_at 2
+
+    assert_equal s(:defn, :x, s(:args, :n)), a
+    assert_equal s(s(:call, s(:lvar, :n), :+, s(:lit, 1))), b
+  end
+
+  def test__fuzzy__split_code
+    # def x(n); n + 1; end
+    sexp = s(:defn, :x, s(:args, :n), s(:call, s(:lvar, :n), :+, s(:lit, 1)))
+    sexp = NotRubyParser.new.parse "def x(n); n + 1; end"
+
+    a, b = sexp.split_code
+
+    assert_equal s(:defn, :x, s(:args, :n)), a
+    assert_equal s(s(:call, s(:lvar, :n), :+, s(:lit, 1))), b
+  end
+
+  FUZZY_CODE = NotRubyParser.new.process <<-RUBY
+    def a
+      f1; f2; f3; f4; f5; f6
+    end
+
+    def b
+          f2; f3; f4; f5; f6
+    end
+
+    def c
+          f2; f3; f4; f5; f6; f7
+    end
+  RUBY
+
+  def test_report__fuzzy
+    flay = Flay.new OPTS.merge(fuzzy: 1, mass: 5)
+
+    flay.process_sexp FUZZY_CODE.deep_clone
+
+    out, err = capture_io do
+      flay.report
+    end
+
+    exp = <<~END
+      Total score (lower is better) = 37
+
+      1) Similar code found in :defn (mass = 21)
+        (string):1 (FUZZY)
+        (string):5
+        (string):9 (FUZZY)
+
+      2) Similar code found in :defn (mass = 16)
+        (string):1
+        (string):9
+    END
+
+    assert_equal "", err
+    assert_equal exp.gsub(/\d+/, "N"), out.gsub(/\d+/, "N")
+  end
+
   def test_report_io
     out = StringIO.new
     flay = Flay.new OPTS
