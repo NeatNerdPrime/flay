@@ -584,7 +584,7 @@ class Sexp
   alias :[] :[] # needed for STRICT_SEXP
 
   def [] a # :nodoc:
-    # TODO: figure out a way to make this STRICT_SEXP happy
+    return super if Integer === a
     self.new._concat super
   end
 

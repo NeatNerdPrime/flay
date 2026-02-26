@@ -229,6 +229,14 @@ class TestSexp < Minitest::Test
     assert_equal exp.gsub(/\d+/, "N"), out.gsub(/\d+/, "N")
   end
 
+  def test__fuzzy__idx
+    sexp = NotRubyParser.new.parse "def x(n); n + 1; end"
+
+    assert_equal :defn, sexp[0]
+    assert_equal s(:defn), sexp[0..0]
+    assert_equal s(:defn, :x), sexp[0..1]
+  end
+
   def test__fuzzy__split_at
     # def x(n); n + 1; end
     sexp = s(:defn, :x, s(:args, :n), s(:call, s(:lvar, :n), :+, s(:lit, 1)))
