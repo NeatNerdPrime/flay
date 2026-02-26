@@ -586,7 +586,6 @@ class Sexp
   def [] a # :nodoc:
     # TODO: figure out a way to make this STRICT_SEXP happy
     self.new._concat super
-    super
   end
 
   def + o # :nodoc:
