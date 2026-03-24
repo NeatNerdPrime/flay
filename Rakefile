@@ -24,7 +24,7 @@ Hoe.spec "flay" do
   dependency "path_expander",  "~> 2.0"
 
   dependency "minitest",       "> 5.8", :dev
-  dependency "ruby2ruby",      "~> 2.2.0", :dev
+  dependency "ruby2ruby",      "~> 2.2", :dev
 
   self.flay_threshold = 250
 end
