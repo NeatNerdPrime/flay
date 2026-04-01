@@ -585,7 +585,7 @@ class Sexp
 
   def [] a # :nodoc:
     return super if Integer === a
-    self.new._concat super
+    self.new._concat super || []
   end
 
   def + o # :nodoc:

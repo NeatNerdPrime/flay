@@ -229,18 +229,35 @@ class TestSexp < Minitest::Test
     assert_equal exp.gsub(/\d+/, "N"), out.gsub(/\d+/, "N")
   end
 
-  def test__fuzzy__idx
-    sexp = NotRubyParser.new.parse "def x(n); n + 1; end"
+  def test_sexp_idx
+    # sexp = NotRubyParser.new.parse "def x(n); n + 1; end"
+    sexp = s(:defn, :x, s(:args, :n),
+             s(:call, s(:lvar, :n), :+, s(:lit, 1)))
 
     assert_equal :defn, sexp[0]
     assert_equal s(:defn), sexp[0..0]
     assert_equal s(:defn, :x), sexp[0..1]
   end
 
+  def test_sexp_idx__off
+    # sexp = NotRubyParser.new.parse "->(something) { something.to_s }"
+    sexp = s(:iter,
+             s(:lambda),
+             s(:args, :something),
+             s(:call, s(:lvar, :something), :to_s))
+
+    # def arguments_element
+    #   call_element.sexp_body(3) || []
+    call_element = sexp[1] # s(:lambda) = this is just wrong
+
+    assert_equal s(), call_element[3..-1]
+    assert_equal s(), call_element.sexp_body(3)
+  end
+
   def test__fuzzy__split_at
     # def x(n); n + 1; end
     sexp = s(:defn, :x, s(:args, :n), s(:call, s(:lvar, :n), :+, s(:lit, 1)))
-    sexp = NotRubyParser.new.parse "def x(n); n + 1; end"
+    # sexp = NotRubyParser.new.parse "def x(n); n + 1; end"
 
     a, b = sexp.split_at 2
 
@@ -251,7 +268,7 @@ class TestSexp < Minitest::Test
   def test__fuzzy__split_code
     # def x(n); n + 1; end
     sexp = s(:defn, :x, s(:args, :n), s(:call, s(:lvar, :n), :+, s(:lit, 1)))
-    sexp = NotRubyParser.new.parse "def x(n); n + 1; end"
+    # sexp = NotRubyParser.new.parse "def x(n); n + 1; end"
 
     a, b = sexp.split_code
 
