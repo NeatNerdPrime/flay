@@ -1,3 +1,10 @@
+=== 2.14.4 / 2026-04-14
+
+* 2 bug fixes:
+
+  * Fix Sexp#[] to return empty sexp if indicies run off the end. (slbug)
+  * Loosened dependency on ruby2ruby to catch up and drop ruby_parser.
+
 === 2.14.3 / 2026-03-23
 
 * 2 bug fixes:
